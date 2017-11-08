@@ -1,44 +1,44 @@
 ﻿using System;
 
-namespace rabbitmq.log4net.gelf.appender.MessageFormatters
+namespace rabbitmq.log4net.appender.MessageFormatters
 {
-    public class ExceptionMessageFormatter : IGelfMessageFormatter
+    public class ExceptionMessageFormatter : IMessageFormatter
     {
         public bool CanApply(object messageObject)
         {
             return messageObject is Exception;
         }
 
-        public void Format(GelfMessage gelfMessage, object messageObject)
+        public void Format(Message Message, object messageObject)
         {
             var exception = (Exception) messageObject;
 
-            if (string.IsNullOrEmpty(gelfMessage.ShortMessage))
+            if (string.IsNullOrEmpty(Message.ShortMessage))
             {
-                gelfMessage.ShortMessage = exception.Message;
+                Message.ShortMessage = exception.Message;
             }
             else
             {
-                gelfMessage["_ExceptionMessage"] = exception.Message;
+                Message["exceptionmessage"] = exception.Message;
             }
 
-            if (string.IsNullOrEmpty(gelfMessage.FullMessage))
+            if (string.IsNullOrEmpty(Message.FullMessage))
             {
-                gelfMessage.FullMessage = exception.ToString();
+                Message.FullMessage = exception.ToString();
             }
             else
             {
-                gelfMessage["_ExceptionMessage"] = exception.Message;
+                Message["exceptionmessage"] = exception.Message;
             }
 
-            gelfMessage["_Exception"] = exception.ToString();
-            gelfMessage["_ExceptionType"] = messageObject.GetType().FullName;
-            gelfMessage["_ExceptionStackTrace"] = exception.StackTrace;
+            Message["exception"] = exception.ToString();
+            Message["exceptiontype"] = messageObject.GetType().FullName;
+            Message["exceptionstacktrace"] = exception.StackTrace;
 
             if (exception.InnerException == null) return;
 
-            gelfMessage["_InnerExceptionType"] = exception.InnerException.GetType().FullName;
-            gelfMessage["_InnerExceptionMessage"] = exception.InnerException.Message;
+            Message[""] = exception.InnerException.GetType().FullName;
+            Message["innerexceptionmessage"] = exception.InnerException.Message;
         }
     }
 }

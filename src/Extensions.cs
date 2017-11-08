@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
     public static class Extensions
     {

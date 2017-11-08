@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace rabbitmq.log4net.gelf.appender.MessageFormatters
+namespace rabbitmq.log4net.appender.MessageFormatters
 {
-    public class DictionaryGelfMessageFormatter : IGelfMessageFormatter
+    public class DictionaryMessageFormatter : IMessageFormatter
     {
         private const string FullMessageKeyName = "full_message";
         private const string ShortMessageKeyName = "short_message";
@@ -17,13 +17,13 @@ namespace rabbitmq.log4net.gelf.appender.MessageFormatters
             return messageObject is IDictionary;
         }
 
-        public virtual void Format(GelfMessage gelfMessage, object messageObject)
+        public virtual void Format(Message Message, object messageObject)
         {
             foreach (DictionaryEntry entry in (IDictionary)messageObject)
             {
                 if (entry.Value == null) continue;
                 var key = FormatKey(entry.Key.ToString());
-                gelfMessage[key] = entry.Value.ToString();
+                Message[key] = entry.Value.ToString();
             }
         }
 

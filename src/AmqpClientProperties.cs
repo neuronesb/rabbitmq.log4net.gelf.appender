@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
     public class AmqpClientProperties
     {

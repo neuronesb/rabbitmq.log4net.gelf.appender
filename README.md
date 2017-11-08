@@ -1,13 +1,13 @@
-rabbitmq.log4net.gelf.appender
+rabbitmq.log4net.appender
 ==============================
 ![Logo](/logo.png "Logo")
 
-The RabbitMQ GELF appender is a customer appender for the [log4net](http://logging.apache.org/log4net/) logging framework which publishes log messages onto [RabbitMQ](http://www.rabbitmq.com/) message bus using the GELF (json) format.
+The RabbitMQ  appender is a customer appender for the [log4net](http://logging.apache.org/log4net/) logging framework which publishes log messages onto [RabbitMQ](http://www.rabbitmq.com/) message bus using the  (json) format.
 
 ## USAGE
 
 ### download the nuget package from the repository
-https://nuget.org/packages/rabbitmq.log4net.gelf.appender/
+https://nuget.org/packages/rabbitmq.log4net.appender/
 
 ### change your app/web config file
 
@@ -20,11 +20,11 @@ sample config
   </configSections>
   
   <log4net>
-    <appender name="rabbitmq.gelf.appender" type="rabbitmq.log4net.gelf.appender.GelfRabbitMqAppender, rabbitmq.log4net.gelf.appender">
+    <appender name="rabbitmq.appender" type="rabbitmq.log4net.appenderRabbitMqAppender, rabbitmq.log4net.appender">
       <HostName value="localhost" />
       <VirtualHost value="/" />
       <Port value="5672" />
-      <Exchange value="log4net.gelf.appender" />
+      <Exchange value="log4net.appender" />
       <Username value="guest" />
       <Password value="guest" />
       <Facility value="sample-application" />
@@ -33,15 +33,15 @@ sample config
    
     <root>
       <level value="ERROR" />
-      <appender-ref ref="rabbitmq.gelf.appender" />
+      <appender-ref ref="rabbitmq.appender" />
     </root>
   </log4net>
 
 </configuration>
 ```  
 
-### Gelf Format 
-https://github.com/Graylog2/graylog2-docs/wiki/GELF
+###  Format 
+https://github.com/Graylog2/graylog2-docs/wiki/
 
 ## Use case
 
@@ -53,15 +53,15 @@ In particular it's handy with a log aggregator like [LogStash](http://logstash.n
 
 ### Version 0.2
 
- * If logger logs an `Exception` tge GELF message is populated with additional information: `_ExceptionType`, `_ExceptionStackTrace`, `_InnerExceptionType`, `_InnerExceptionMessage`
+ * If logger logs an `Exception` tge  message is populated with additional information: `_ExceptionType`, `_ExceptionStackTrace`, `_InnerExceptionType`, `_InnerExceptionMessage`
  * The same happens when an exception object is provided when logging a message
- * More information from the LoggingEvent is populated in the GELF message: `_ThreadName` and `_Domain`
+ * More information from the LoggingEvent is populated in the  message: `_ThreadName` and `_Domain`
  * The `full_message` is only populated from a string when the original string is too long for `short_message`
  * When the Message Formatters don't populate `short_message` it's populated with the type of the logged object
 
 ### Version 0.1.7
 
- * A property called `message` (case insensitive) in a logged object is mapped to GELF `short_message`
+ * A property called `message` (case insensitive) in a logged object is mapped to  `short_message`
 
 ### Version 0.1.6
 
@@ -69,4 +69,4 @@ In particular it's handy with a log aggregator like [LogStash](http://logstash.n
 
 ### Version 0.1.5
 
- * You can specify `Facility` for the GELF message in the appender config file
+ * You can specify `Facility` for the  message in the appender config file

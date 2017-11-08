@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using log4net.Appender;
 using log4net.Core;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
-    public class GelfLogLevelMapper
+    public class LogLevelMapper
     {
         private readonly Dictionary<string, long> levelMappings;
 
-        public GelfLogLevelMapper()
+        public LogLevelMapper()
         {
             levelMappings = new Dictionary<string, long>
                                 {

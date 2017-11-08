@@ -3,18 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace rabbitmq.log4net.gelf.appender.MessageFormatters
+namespace rabbitmq.log4net.appender.MessageFormatters
 {
-    public class GenericObjectGelfMessageFormatter : DictionaryGelfMessageFormatter
+    public class GenericObjectMessageFormatter : DictionaryMessageFormatter
     {
         public override bool CanApply(object messageObject)
         {
             return messageObject != null;
         }
 
-        public override void Format(GelfMessage gelfMessage, object messageObject)
+        public override void Format(Message Message, object messageObject)
         {
-            base.Format(gelfMessage, CreateDictionaryFromObject(messageObject));
+            base.Format(Message, CreateDictionaryFromObject(messageObject));
         }
 
         private IDictionary CreateDictionaryFromObject(object messageObject)

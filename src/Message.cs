@@ -2,22 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
-    public class GelfMessage : Dictionary<string, object>
+    public class Message : Dictionary<string, object>
     {
-        public string Facility
-        {
-            get { return ValueAs<string>("facility"); }
-            set { SetValueAs(value, "facility"); }
-        }
-
-        public string File
-        {
-            get { return ValueAs<string>("file"); }
-            set { SetValueAs(value, "file"); }
-        }
-
         public string FullMessage
         {
             get { return ValueAs<string>("full_message"); }
@@ -36,23 +24,10 @@ namespace rabbitmq.log4net.gelf.appender
             set { SetValueAs(value, "level"); }
         }
 
-        public string Line
-        {
-            get { return ValueAs<string>("line"); }
-            set { SetValueAs(value, "line"); }
-
-        }
-
         public string ShortMessage
         {
             get { return ValueAs<string>("short_message"); }
             set { SetValueAs(value, "short_message"); }
-        }
-
-        public string Version
-        {
-            get { return ValueAs<string>("version"); }
-            set { SetValueAs(value, "version"); }
         }
 
         public DateTime Timestamp
@@ -63,16 +38,17 @@ namespace rabbitmq.log4net.gelf.appender
                     return DateTime.MinValue;
 
                 object val = this["timestamp"];
-                double value;
-                bool parsed = Double.TryParse(val as string, NumberStyles.Any, CultureInfo.InvariantCulture, out value);
-                return parsed ? value.FromUnixTimestamp() : DateTime.MinValue;
+                DateTime  value;
+                
+                bool parsed = DateTime.TryParse(val as string, out value);
+                return parsed ? value : DateTime.MinValue;
             }
             set
             {
                 if (!ContainsKey("timestamp"))
-                    Add("timestamp", value.ToUnixTimestamp().ToString(CultureInfo.InvariantCulture));
+                    Add("timestamp", value.ToString("yyyy-MM-dd HH:mm:ss.fffzzz"));
                 else
-                    this["timestamp"] = value.ToUnixTimestamp().ToString(CultureInfo.InvariantCulture);
+                    this["timestamp"] = value.ToString("yyyy - MM - dd HH: mm:ss.fffzzz");
             }
         }
 
@@ -92,16 +68,16 @@ namespace rabbitmq.log4net.gelf.appender
                 this[key] = value;
         }
 
-        public static GelfMessage EmptyGelfMessage
+        public static Message EmptyMessage
         {
             get
             {
-                return new GelfMessage
+                return new Message
                 {
-                    Version = "1.0",
+                    //Version = "1.0",
                     Host = Environment.MachineName,
-                    File = "",
-                    Line = ""
+                    //File = "",
+                    //Line = ""
                 };
             }
         }

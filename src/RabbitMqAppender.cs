@@ -3,9 +3,9 @@ using log4net.Appender;
 using log4net.Core;
 using RabbitMQ.Client.Framing;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
-    public class GelfRabbitMqAppender : AppenderSkeleton
+    public class RabbitMqAppender : AppenderSkeleton
     {
         public string HostName { get; set; }
         public int Port { get; set; }
@@ -18,16 +18,16 @@ namespace rabbitmq.log4net.gelf.appender
         public string ExchangeType { get; set; }
         public string RoutingKey { get; set; }
 
-        protected readonly GelfAdapter gelfAdapter;
+        protected readonly Adapter Adapter;
         private IConnection connection;
         protected IModel model;
         private IKnowAboutConfiguredFacility facilityInformation = new UnknownFacility();
 
-        public GelfRabbitMqAppender() : this(new GelfAdapter()) { SetDefaultConfig(); }
+        public RabbitMqAppender() : this(new Adapter()) { SetDefaultConfig(); }
 
-        public GelfRabbitMqAppender(GelfAdapter gelfAdapter)
+        public RabbitMqAppender(Adapter Adapter)
         {
-            this.gelfAdapter = gelfAdapter;
+            this.Adapter = Adapter;
             SetDefaultConfig();
         }
 
@@ -36,11 +36,11 @@ namespace rabbitmq.log4net.gelf.appender
             HostName = string.IsNullOrEmpty(HostName) ? "localhost" : HostName;
             Port = Port == 0 ? 5672 : Port;
             VirtualHost =string.IsNullOrEmpty(VirtualHost) ? "/" : VirtualHost;
-            Exchange = string.IsNullOrEmpty(Exchange) ? "log4net.gelf.appender" : Exchange;
+            Exchange = string.IsNullOrEmpty(Exchange) ? "log4net.appender" : Exchange;
             Username = string.IsNullOrEmpty(Username) ? "guest" : Username;
             Password = string.IsNullOrEmpty(Password) ? "guest" : Password;
             ExchangeType = string.IsNullOrEmpty(ExchangeType) ? "topic" : ExchangeType;
-            RoutingKey =string.IsNullOrEmpty(RoutingKey) ? "log4net.gelf.appender" : RoutingKey;
+            RoutingKey =string.IsNullOrEmpty(RoutingKey) ? "log4net.appender" : RoutingKey;
         }
 
         public override void ActivateOptions()
@@ -50,7 +50,7 @@ namespace rabbitmq.log4net.gelf.appender
             if (!string.IsNullOrWhiteSpace(Facility))
             {
                 facilityInformation = new KnownFacility(Facility);
-                gelfAdapter.Facility = Facility;
+                Adapter.Facility = Facility;
             }
 
             OpenConnection();
@@ -65,12 +65,12 @@ namespace rabbitmq.log4net.gelf.appender
         private void OpenConnection()
         {
             connection = CreateConnectionFactory().CreateConnection();
-            connection.ConnectionShutdown += ConnectionShutdown;
+            connection.ConnectionShutdown += Connection_ConnectionShutdown;
             model = connection.CreateModel();
             model.ExchangeDeclare(Exchange, ExchangeType, Durable);
         }
 
-        private void ConnectionShutdown(IConnection shutingDownConnection, ShutdownEventArgs reason)
+        private void Connection_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
             SafeShutdownForConnection();
             SafeShutDownForModel();
@@ -79,7 +79,7 @@ namespace rabbitmq.log4net.gelf.appender
         protected virtual void SafeShutDownForModel()
         {
             if (model == null) return;
-            model.Close(Constants.ReplySuccess, "gelf rabbit appender shutting down!");
+            model.Close(Constants.ReplySuccess, " rabbit appender shutting down!");
             model.Dispose();
             model = null;
         }
@@ -87,7 +87,7 @@ namespace rabbitmq.log4net.gelf.appender
         private void SafeShutdownForConnection()
         {
             if (connection == null) return;
-            connection.ConnectionShutdown -= ConnectionShutdown;
+            connection.ConnectionShutdown -= Connection_ConnectionShutdown;
             connection.AutoClose = true;
             connection = null;
         }
@@ -110,7 +110,7 @@ namespace rabbitmq.log4net.gelf.appender
         {
             EnsureConnectionIsOpen();
             model.ExchangeDeclare(Exchange, ExchangeType, Durable);
-            var messageBody = gelfAdapter.Adapt(loggingEvent).AsJson();
+            var messageBody = Adapter.Adapt(loggingEvent).AsJson();
             model.BasicPublish(Exchange, RoutingKey, true, null, messageBody.AsByteArray());
         }
 

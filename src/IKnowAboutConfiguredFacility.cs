@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
     public interface IKnowAboutConfiguredFacility
     {

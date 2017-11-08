@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace rabbitmq.log4net.gelf.appender.MessageFormatters
+namespace rabbitmq.log4net.appender.MessageFormatters
 {
-    public class StringGelfMessageFormatter : IGelfMessageFormatter
+    public class StringMessageFormatter : IMessageFormatter
     {
         private const int MaximumShortMessageLength = 250;
 
@@ -16,17 +16,17 @@ namespace rabbitmq.log4net.gelf.appender.MessageFormatters
             return stringTypeList.Contains(messageObject.GetType().FullName);
         }
 
-        public void Format(GelfMessage gelfMessage, object messageObject)
+        public void Format(Message Message, object messageObject)
         {
             var message = messageObject.ToString();
             if (message.Length > MaximumShortMessageLength)
             {
-                gelfMessage.FullMessage = message;
-                gelfMessage.ShortMessage = message.TruncateString(MaximumShortMessageLength);
+                Message.FullMessage = message;
+                Message.ShortMessage = message.TruncateString(MaximumShortMessageLength);
             }
             else
             {
-                gelfMessage.ShortMessage = message;
+                Message.ShortMessage = message;
             }
         }
     }

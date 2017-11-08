@@ -2,13 +2,13 @@ using System.Threading;
 using RabbitMQ.Client;
 using log4net.Core;
 
-namespace rabbitmq.log4net.gelf.appender
+namespace rabbitmq.log4net.appender
 {
-    public class GelfRabbitMqAppenderAsync : GelfRabbitMqAppender
+    public class RabbitMqAppenderAsync : RabbitMqAppender
     {
-        public GelfRabbitMqAppenderAsync() : this(new GelfAdapter()) { }
+        public RabbitMqAppenderAsync() : this(new Adapter()) { }
 
-        public GelfRabbitMqAppenderAsync(GelfAdapter gelfAdapter) : base(gelfAdapter) { }
+        public RabbitMqAppenderAsync(Adapter Adapter) : base(Adapter) { }
 
         protected override void Append(LoggingEvent loggingEvent)
         {
@@ -32,8 +32,8 @@ namespace rabbitmq.log4net.gelf.appender
             lock (model)
             {
                 EnsureConnectionIsOpen();
-                var messageBody = gelfAdapter.Adapt(loggingEvent).AsJson();
-                model.BasicPublish(Exchange, "log4net.gelf.appender", true, null, messageBody.AsByteArray());
+                var messageBody = Adapter.Adapt(loggingEvent).AsJson();
+                model.BasicPublish(Exchange, "log4net.appender", true, null, messageBody.AsByteArray());
             }
         }
     }
